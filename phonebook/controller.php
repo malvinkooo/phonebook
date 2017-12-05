@@ -8,22 +8,22 @@ $app = new \Slim\App();
 
 $app->get('/api/phonebook', function (Request $request, Response $response) {
     global $db;
-	$response = $response->withHeader('Content-type', 'application/json');
+    $response = $response->withHeader('Content-type', 'application/json');
 
-	$stm = $db->prepare("SELECT id, name, surname, patronymic, mainphone, workphone, birthday, comment FROM phonebook");
-	
+    $stm = $db->prepare("SELECT id, name, surname, patronymic, mainphone, workphone, birthday, comment FROM phonebook");
+
     if (($stm->execute())) {
-        $data = $stm->fetchAll(PDO::FETCH_ASSOC);        
-        $response->getBody()->write(json_encode(getRecords($data, true)));    
-    } else {        
-        $response->getBody()->write(json_encode(writeError("Записей не найдено")));        
-	}
-	return $response;
+        $data = $stm->fetchAll(PDO::FETCH_ASSOC);
+        $response->getBody()->write(json_encode(getRecords($data, true)));
+    } else {
+        $response->getBody()->write(json_encode(writeError("Записей не найдено")));
+    }
+    return $response;
 });
 
 $app->post('/api/phonebook', function (Request $request, Response $response) {
-	global $db;
-	$response = $response->withHeader('Content-type', 'application/json');	
+    global $db;
+    $response = $response->withHeader('Content-type', 'application/json');
     $sendData = $db->prepare("INSERT INTO `phonebook` (`name`, `surname`, `patronymic`, `mainphone`, `workphone`, `birthday`, `comment`) VALUES (:name, :surname, :patronymic, :mainphone, :workphone, :birthday, :comment)");
 
     $postParams = $request->getParsedBody();
@@ -45,18 +45,18 @@ $app->post('/api/phonebook', function (Request $request, Response $response) {
 
         if ($getData->execute(array($lastid))) {
             $data = $getData->fetchAll(PDO::FETCH_ASSOC);
-            if (!empty($data)) {                
-				$response->getBody()->write(json_encode(getRecords($data[0], false)));                
+            if (!empty($data)) {
+                $response->getBody()->write(json_encode(getRecords($data[0], false)));
             } else {
-                $response->getBody()->write(json_encode(writeError("Запись не найдена")));                
+                $response->getBody()->write(json_encode(writeError("Запись не найдена")));
             }
         } else {
-            $response->getBody()->write(json_encode(writeError("Запрос прошел неудачно")));            
+            $response->getBody()->write(json_encode(writeError("Запрос прошел неудачно")));
         }
     } else {
         $response->getBody()->write(json_encode(writeError("Запись не была добавлена")));
-	}
-	return $response;
+    }
+    return $response;
 });
 
 $app->run();
