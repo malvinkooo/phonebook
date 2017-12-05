@@ -14,40 +14,40 @@ $(document).ready(function(){
 	$('.phone-table').jtable({
 		title: 'Телефонная книга',
 		actions: {
-			listAction: function(getData, jtParams){
-            return $.Deferred(function($dfd){
-               $.ajax({
-                  url: 'api/phonebook',
-                  type: 'GET',
-                  dataType: 'json',
-                  data: getData,
-                  success: function(data){
-                     $dfd.resolve(data);
-                  },
-                  error: function() {
-                     $dfd.reject();
-                  }
-               });
-            });
-         },
+			listAction: function(getData, jtParams) {
+                return $.Deferred(function($dfd) {
+                    var xhr = new XMLHttpRequest();
+                    xhr.open('GET', 'api/phonebook', true);
+                    xhr.onreadystatechange = function() {
+                        if(xhr.readyState === XMLHttpRequest.DONE) {
+                            if (xhr.status === 200) {
+                                $dfd.resolve(JSON.parse(xhr.responseText));                            
+                            } else {
+                                $dfd.reject();
+                            }
+                        }
+                    }
+                    xhr.send();
+                    
+                });
+            },
 			createAction: function(postData, jtParams){
-            return $.Deferred(function($dfd){
-               $.ajax({
-                  url: 'api/phonebook',
-                  type: 'POST',
-                  dataType: 'json',
-                  data: postData,
-                  seccess: function(data){
-                     $dfd.resolve(data);
-                     console.log('=)');
-                  },
-                  error: function(){
-                     $dfd.reject();
-                     console.log('=(');
-                  }
-               });
-            });
-         },
+                return $.Deferred(function($dfd) {
+                    var xhr = new XMLHttpRequest();                    
+                    xhr.open('POST', 'api/phonebook', true)
+                    xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded')
+                    xhr.onreadystatechange = function() {
+                        if(xhr.readyState === XMLHttpRequest.DONE) {
+                            if (xhr.status === 200) {
+                                $dfd.resolve(JSON.parse(xhr.responseText));                            
+                            } else {
+                                $dfd.reject();
+                            }
+                        }
+                    }
+                    xhr.send(postData);
+                });
+            },
 			updateAction: '/phonebook/updateAction.php',
 			deleteAction: '/phonebook/deleteAction.php'
 		},
