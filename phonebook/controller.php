@@ -59,4 +59,59 @@ $app->post('/api/phonebook', function (Request $request, Response $response) {
     return $response;
 });
 
+$app->delete('/api/phonebook/{id}', function (Request $request, Response $response, $args) {
+    global $db;
+    $response = $response->withHeader('Content-type', 'application/json');
+
+    $stmt = $db->prepare("DELETE FROM phonebook WHERE id = ?");
+
+    $id = $args['id'];
+    if($stmt->execute(array($id))) {
+        $result = array();
+        $result['Result'] = 'OK';
+        $response->getBody()->write(json_encode($result));
+    } else {
+        $response->getBody()->write(json_encode(writeError("Записей не была удалена")));
+    }
+    return $response;
+});
+
+$app->put('/api/phonebook/{id}', function(Request $request, Response $response, $args){
+    global $db;
+
+    $sendData = $db -> prepare("UPDATE `phonebook` SET `name` = :name, `surname` = :surname, `patronymic` = :patronymic, `mainphone` = :mainphone, `workphone` = :workphone, `birthday` = :birthday, `comment` = :comment WHERE id = :id");
+
+    $postParams = $request->getParsedBody();
+    var_dump($postParams);
+    $params = array(
+        'id' => $args['id'],
+        ':name' => $postParams['name'],
+        ':surname' => $postParams['surname'],
+        ':patronymic' => $postParams['patronymic'],
+        ':mainphone' => $postParams['mainphone'],
+        ':workphone' => $postParams['workphone'],
+        ':birthday' => $postParams['birthday'],
+        ':comment' => $postParams['comment'],
+    );
+    var_dump($params);
+    if($sendData -> execute($params)) {
+
+        $getData = $db -> prepare("SELECT id, name, surname, patronymic, mainphone, workphone, birthday, comment FROM phonebook WHERE id = ?");
+
+        if($getData -> execute(array($args['id']))) {
+            $data = $getData -> fetchAll(PDO::FETCH_ASSOC);
+            if(!empty($data)) {
+                $response->getBody()->write(json_encode(getRecords($data[0], false)));
+            } else {
+                $response->getBody()->write(json_encode(getRecords("Запись не найдена")));
+            }
+        } else {
+            $response->getBody()->write(json_encode(writeError("Запрос прошел неудачно")));
+        }
+    } else {
+        $response->getBody()->write(json_encode(writeError("Запись не была обновлена")));
+    }
+    return $response;
+});
+
 $app->run();

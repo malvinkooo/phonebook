@@ -10,6 +10,11 @@
 <script src="jtable/jquery.jtable.min.js" type="text/javascript"></script>
 <script src="jtable/localization/jquery.jtable.ru.js" type="text/javascript"></script>
 <script>
+   // var string = 'id=687667&ghghgh&hjhh';
+   //          var pattern = "/[^id=([\d]*)&]/";
+   //          var str = string.match(pattern);
+   //          console.log(str);
+            
 $(document).ready(function(){
 	$('.phone-table').jtable({
 		title: 'Телефонная книга',
@@ -34,8 +39,8 @@ $(document).ready(function(){
 			createAction: function(postData, jtParams){
                 return $.Deferred(function($dfd) {
                     var xhr = new XMLHttpRequest();                    
-                    xhr.open('POST', 'api/phonebook', true)
-                    xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded')
+                    xhr.open('POST', 'api/phonebook', true);
+                    xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
                     xhr.onreadystatechange = function() {
                         if(xhr.readyState === XMLHttpRequest.DONE) {
                             if (xhr.status === 200) {
@@ -48,8 +53,46 @@ $(document).ready(function(){
                     xhr.send(postData);
                 });
             },
-			updateAction: '/phonebook/updateAction.php',
-			deleteAction: '/phonebook/deleteAction.php'
+			updateAction: function(postData, jtParams){
+
+            return $.Deferred(function($dfd){
+               var xhr = new XMLHttpRequest();
+
+               console.log(decodeURI(postData));
+
+               var url = 'api/phonebook/' + postData['id'];
+               xhr.open('PUT', url, true);
+               // xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+               xhr.onreadystatechange = function() {
+                  if(xhr.readyState === XMLHttpRequest.DONE) {
+                     if (xhr.status === 200) {
+                        $dfd.resolve(JSON.parse(xhr.responseText));                            
+                     } else {
+                        $dfd.reject();
+                     }
+                  }
+               }
+               xhr.send(postData);
+            });
+         },
+			deleteAction: function(postData, jtParams){
+               return $.Deferred(function($dfd){
+                  var xhr = new XMLHttpRequest();
+                  var url = 'api/phonebook/' + postData['id'];
+                  xhr.open('DELETE', url, true);
+                  xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+                  xhr.onreadystatechange = function(){
+                     if(xhr.readyState === XMLHttpRequest.DONE){
+                        if(xhr.status === 200) {
+                           $dfd.resolve(JSON.parse(xhr.responseText));
+                        } else {
+                           $dfd.reject();
+                        }
+                     }
+                  }
+                  xhr.send(postData);
+               });
+         }
 		},
 		fields: {
          id: {
