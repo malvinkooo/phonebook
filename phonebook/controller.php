@@ -14,6 +14,13 @@ $app->get('/api/phonebook', function (Request $request, Response $response) {
 
     if (($stm->execute())) {
         $data = $stm->fetchAll(PDO::FETCH_ASSOC);
+
+        foreach($data as $record) {
+            // echo $record['birthday'].'<br>';
+            $record['birthday'] = "\/Date(".strtotime($record['birthday']).")\/";
+            // echo $record['birthday'].'<br>';
+        }
+
         $response->getBody()->write(json_encode(getRecords($data, true)));
     } else {
         $response->getBody()->write(json_encode(writeError("Записей не найдено")));
@@ -36,6 +43,8 @@ $app->post('/api/phonebook', function (Request $request, Response $response) {
         ':birthday' => $postParams['birthday'],
         ':comment' => $postParams['comment'],
     );
+
+    // echo strtotime($postParams['birthday']);
 
     if ($sendData->execute($params)) {
         global $db;
@@ -71,7 +80,7 @@ $app->delete('/api/phonebook/{id}', function (Request $request, Response $respon
         $result['Result'] = 'OK';
         $response->getBody()->write(json_encode($result));
     } else {
-        $response->getBody()->write(json_encode(writeError("Записей не была удалена")));
+        $response->getBody()->write(json_encode(writeError("Записи не были удалены")));
     }
     return $response;
 });
@@ -82,7 +91,6 @@ $app->put('/api/phonebook/{id}', function(Request $request, Response $response, 
     $sendData = $db -> prepare("UPDATE `phonebook` SET `name` = :name, `surname` = :surname, `patronymic` = :patronymic, `mainphone` = :mainphone, `workphone` = :workphone, `birthday` = :birthday, `comment` = :comment WHERE id = :id");
 
     $postParams = $request->getParsedBody();
-    var_dump($postParams);
     $params = array(
         'id' => $args['id'],
         ':name' => $postParams['name'],
@@ -93,7 +101,6 @@ $app->put('/api/phonebook/{id}', function(Request $request, Response $response, 
         ':birthday' => $postParams['birthday'],
         ':comment' => $postParams['comment'],
     );
-    var_dump($params);
     if($sendData -> execute($params)) {
 
         $getData = $db -> prepare("SELECT id, name, surname, patronymic, mainphone, workphone, birthday, comment FROM phonebook WHERE id = ?");
