@@ -29,10 +29,6 @@
 								}
 							}
 							xhr.send();
-<<<<<<< HEAD
-
-=======
->>>>>>> 9dad3e473f8539c457acc11ae593624aa7e63e3e
 						});
 					},
 					createAction: function(postData, jtParams){
@@ -53,13 +49,7 @@
 						});
 					},
 					updateAction: function(postData, jtParams){
-<<<<<<< HEAD
-
 						return $.Deferred(function($dfd){
-
-=======
-						return $.Deferred(function($dfd){
->>>>>>> 9dad3e473f8539c457acc11ae593624aa7e63e3e
 							var xhr = new XMLHttpRequest();
 							var url = 'api/phonebook/' + currentRecordId;
 							xhr.open('PUT', url, true);
@@ -94,9 +84,6 @@
 							xhr.send(postData);
 						});
 					}
-				},
-				formSubmitting: function (event, data) {
-					currentRecordId = $(data.row).attr('data-record-key');
 				},
 				fields: {
 					id: {
@@ -135,6 +122,7 @@
 					}
 				},
 				formSubmitting: function(event, data) {
+					currentRecordId = $(data.row).attr('data-record-key');
 					var name = data.form.find('input[name="name"]')[0].value;
 					var mainphone = data.form.find('input[name="mainphone"]')[0].value;
 					if( !(name.length && mainphone.length) ) {
