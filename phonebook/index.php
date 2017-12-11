@@ -29,7 +29,10 @@
 								}
 							}
 							xhr.send();
+<<<<<<< HEAD
 
+=======
+>>>>>>> 9dad3e473f8539c457acc11ae593624aa7e63e3e
 						});
 					},
 					createAction: function(postData, jtParams){
@@ -50,9 +53,13 @@
 						});
 					},
 					updateAction: function(postData, jtParams){
+<<<<<<< HEAD
 
 						return $.Deferred(function($dfd){
 
+=======
+						return $.Deferred(function($dfd){
+>>>>>>> 9dad3e473f8539c457acc11ae593624aa7e63e3e
 							var xhr = new XMLHttpRequest();
 							var url = 'api/phonebook/' + currentRecordId;
 							xhr.open('PUT', url, true);
