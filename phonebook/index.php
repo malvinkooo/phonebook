@@ -131,6 +131,7 @@
 					var name = data.form.find('input[name="name"]')[0].value;
 					var mainphone = data.form.find('input[name="mainphone"]')[0].value;
 					if( !(name.length && mainphone.length) ) {
+						alert('Вы заполнили не все обязательные поля!');
 						return false;
 					}
 				}
