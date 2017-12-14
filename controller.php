@@ -95,6 +95,10 @@ $app->put('/api/phonebook/{id}', function(Request $request, Response $response, 
             WHERE id = :id");
 
     $postParams = $request->getParsedBody();
+
+    if( empty($postParams['birthday']) ) {
+        $postParams['birthday'] = NULL;
+    }
     $params = array(
         'id' => $args['id'],
         ':name' => $postParams['name'],
