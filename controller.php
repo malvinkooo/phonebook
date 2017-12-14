@@ -28,6 +28,10 @@ $app->post('/api/phonebook', function (Request $request, Response $response) {
     $sendData = $db->prepare("INSERT INTO `phonebook` (`name`, `surname`, `patronymic`, `mainphone`, `workphone`, `birthday`, `comment`) VALUES (:name, :surname, :patronymic, :mainphone, :workphone, :birthday, :comment)");
 
     $postParams = $request->getParsedBody();
+
+    if( empty($postParams['birthday']) ) {
+        $postParams['birthday'] = NULL;
+    }
     $params = array(
         ':name' => $postParams['name'],
         ':surname' => $postParams['surname'],
